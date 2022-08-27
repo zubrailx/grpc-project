@@ -1,14 +1,13 @@
 cmake_minimum_required(VERSION 3.13)
-
+# -----------------------------------------------------------------------------
+# Basic setup
+# -----------------------------------------------------------------------------
 set(PROJECT_NAME grpc-project)
 # set(EXEC_NAME grpc-exec)
 # set(CLIENT_EXEC_NAME grpc-client-exec)
 # set(SERVER_EXEC_NAME grpc-server-exec)
 
 project(${PROJECT_NAME} LANGUAGES C CXX)
-# add_executable(${EXEC_NAME} src/main.cpp)
-# add_executable(${CLIENT_EXEC_NAME} src/client.cpp)
-# add_executable(${SERVER_EXEC_NAME} src/server.cpp)
 
 # set latest standard
 # set(CMAKE_CXX_STANDARD 23)
@@ -16,8 +15,9 @@ set(CMAKE_CXX_FLAGS "-std=c++2b ${CMAKE_CXX_FLAGS}")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3")
-
-# add libraries
+# -----------------------------------------------------------------------------
+# Libraries
+# -----------------------------------------------------------------------------
 set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)
 
@@ -58,25 +58,38 @@ add_custom_command(
 )
 set(GENERATED_PROTOBUF_FILES ${HELLOWORLD_PB_H_FILE} ${HELLOWORLD_PB_CPP_FILE}
     ${HELLOWORLD_GRPC_PB_H_FILE} ${HELLOWORLD_GRPC_PB_CPP_FILE})
-
 include_directories(${GENERATED_PROTOBUF_PATH})
-# link_libraries(grpc++_unsecure grpc gpr )
+# -----------------------------------------------------------------------------
+# Linking and executables
+# -----------------------------------------------------------------------------
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/arc)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+# file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/example)
 
-link_libraries(grpc++ grpc++_reflection ${PROTOBUF_LIBRARY})
+# Grpc example 
+add_library(helloworld_grpc_proto STATIC ${GENERATED_PROTOBUF_FILES})
+target_link_libraries(helloworld_grpc_proto
+  grpc++
+  ${PROTOBUFF_LIBRARY})
 
-add_executable(greeter_server src/example/server.cpp ${GENERATED_PROTOBUF_FILES})
-add_executable(greeter_client src/example/client.cpp ${GENERATED_PROTOBUF_FILES})
-# add_executable(greeter_async_server src/server-async.cpp ${GENERATED_PROTOBUF_FILES})
-# add_executable(greeter_async_client src/client-async.cpp ${GENERATED_PROTOBUF_FILES})
-
-#[[ # link libraries
-# target_link_libraries(${EXEC_NAME} grpc++)
-target_link_libraries(${CLIENT_EXEC_NAME} grpc++)
-target_link_libraries(${SERVER_EXEC_NAME} grpc++)
-
-# testing
+foreach(_target
+  client server
+  async-client async-server)
+  add_executable(example_${_target} "${CMAKE_CURRENT_SOURCE_DIR}/src/example/${_target}.cpp")
+  target_link_libraries(example_${_target} 
+    helloworld_grpc_proto
+    grpc++ 
+    grpc++_reflection 
+    ${PROTOBUF_LIBRARY})
+endforeach()
+# -----------------------------------------------------------------------------
+# Testing
+# -----------------------------------------------------------------------------
 enable_testing()
-
+# -----------------------------------------------------------------------------
+# Formatting
+# -----------------------------------------------------------------------------
 # clang-format
 add_custom_target(clang-format
         COMMAND
@@ -88,4 +101,4 @@ add_custom_target(clang-format
         ${PROJECT_SOURCE_DIR}
         COMMENT
         "Running clang-format on sources..."
-) ]]
+)
