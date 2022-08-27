@@ -64,8 +64,8 @@ include_directories(${GENERATED_PROTOBUF_PATH})
 
 link_libraries(grpc++ grpc++_reflection ${PROTOBUF_LIBRARY})
 
-add_executable(greeter_server src/server.cpp ${GENERATED_PROTOBUF_FILES})
-add_executable(greeter_client src/client.cpp ${GENERATED_PROTOBUF_FILES})
+add_executable(greeter_server src/example/server.cpp ${GENERATED_PROTOBUF_FILES})
+add_executable(greeter_client src/example/client.cpp ${GENERATED_PROTOBUF_FILES})
 # add_executable(greeter_async_server src/server-async.cpp ${GENERATED_PROTOBUF_FILES})
 # add_executable(greeter_async_client src/client-async.cpp ${GENERATED_PROTOBUF_FILES})
 
