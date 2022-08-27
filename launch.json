@@ -1,10 +1,10 @@
 {
   "configurations": [
     {
-      "name": "[json]: launch `any_exec`",
+      "name": "[json]: launch debug `example_server`",
       "type": "cppdbg",
       "request": "launch",
-      "program": "./build/any_exec",
+      "program": "./build/debug/bin/example_server",
       "cwd":"${workspaceFolder}",
       "stopAtEntry": true
     }
