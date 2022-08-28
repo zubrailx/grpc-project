@@ -13,13 +13,14 @@ RESET=
 VERBOSE=
 TOOLCHAIN=
 TOOLCHAIN_FILE=  # specify default toolchain and then it can be overriden using toolchain=value arg
+JOBS="-j8"
 
 for arg; do
   key=${arg%%=*}
   value=${arg#*=} # file arg without = then [value = key]
   case "$key" in
     --help|-h)    echo $USAGE; exit 0;;
-    -v|--verbose) VERBOSE='VERBOSE=1'  ;;
+    -v|--verbose) VERBOSE='--log-level=VERBOSE'  ;;
     debug)        TYPE=DEBUG;   BUILD_DIR=$BUILD/debug ;;
     release)      TYPE=RELEASE; BUILD_DIR=$BUILD/release ;;
     clean)        CLEAN=1  ;;
@@ -39,4 +40,4 @@ $CMAKE -S . -B $BUILD_DIR --warn-uninitialized -DCMAKE_BUILD_TYPE=$TYPE $TOOLCHA
 
 [[ -n $CLEAN ]] && $CMAKE --build $BUILD_DIR --target clean
 
-$CMAKE --build $BUILD_DIR --no-print-directory -- $VERBOSE
+$CMAKE --build $BUILD_DIR $VERBOSE $JOBS

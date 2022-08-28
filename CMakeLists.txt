@@ -3,10 +3,6 @@ cmake_minimum_required(VERSION 3.13)
 # Basic setup
 # -----------------------------------------------------------------------------
 set(PROJECT_NAME grpc-project)
-# set(EXEC_NAME grpc-exec)
-# set(CLIENT_EXEC_NAME grpc-client-exec)
-# set(SERVER_EXEC_NAME grpc-server-exec)
-
 project(${PROJECT_NAME} LANGUAGES C CXX)
 
 # set latest standard
@@ -14,7 +10,17 @@ project(${PROJECT_NAME} LANGUAGES C CXX)
 set(CMAKE_CXX_FLAGS "-std=c++2b ${CMAKE_CXX_FLAGS}")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
-set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3")
+add_compile_options(
+  # -Wall
+  # -Wextra
+  # -Wconversion
+  # -Wsign-conversion
+  $<$<CONFIG:DEBUG>:-g>
+  $<$<CONFIG:DEBUG>:-Og>
+  $<$<CONFIG:RELEASE>:-O3>
+)
+# set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3")
+add_link_options()
 # -----------------------------------------------------------------------------
 # Libraries
 # -----------------------------------------------------------------------------
