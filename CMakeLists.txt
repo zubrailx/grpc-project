@@ -26,6 +26,20 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/arc)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/example)
 
+file(GLOB_RECURSE SRCS
+  CONFIGURE_DEPENDS
+  ${CMAKE_SOURCE_DIR}/src/*.cpp)
+
+file(GLOB_RECURSE HDRS
+  CONFIGURE_DEPENDS
+  ${CMAKE_SOURCE_DIR}/src/*.h
+  ${CMAKE_SOURCE_DIR}/include/*.h
+  ${CMAKE_SOURCE_DIR}/src/*.hpp
+  ${CMAKE_SOURCE_DIR}/include/*.hpp)
+
+file(GLOB_RECURSE TSTS
+  CONFIGURE_DEPENDS
+  ${CMAKE_SOURCE_DIR}/test/*.cpp)
 # -----------------------------------------------------------------------------
 # Configurations
 # -----------------------------------------------------------------------------
@@ -113,7 +127,7 @@ add_custom_target(clang-format
         clang-format
         -style=file
         -i
-        ${SRCS} ${HDRS} ${TESTS}
+        ${SRCS} ${HDRS} ${TSTS}
         WORKING_DIRECTORY
         ${PROJECT_SOURCE_DIR}
         COMMENT
