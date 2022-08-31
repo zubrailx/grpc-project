@@ -2,11 +2,13 @@
 
 set -o errexit
 set -o nounset
-USAGE='Usage: [-v | --verbose]
-              [debug | release]
-              [reset | clean]
-              [generate - generate buildtree]
-              [`key | key=value (without -D)`]'
+USAGE="Usage:
+      \t[-v | --verbose]\n
+      \t[debug | release]\n
+      \t[reset - rm -rf ./build]\n
+      \t[generate - generate buildtree [\`key | key=value\` - cmake variables]]\n
+      \t[clean]\n
+      \t[target=value]"
 
 CMAKE=cmake
 BUILD=./build
@@ -19,22 +21,24 @@ GENERATE=
 JOBS="-j8"
 CMAKE_BUILDTREE_VARIABLES="" 
 CMAKE_BUILDTREE_OPTIONS="" # --warn-uninitialized
+CMAKE_BUILD_OPTIONS=""
 
 for arg; do
   key=${arg%%=*}
   value=${arg#*=} # file arg without = then [value = key]
   case "$key" in
-    --help|-h)    echo $USAGE; exit 0;;
+    --help|-h|help)    echo -e $USAGE; exit 0;;
     -v|--verbose) VERBOSE='--log-level=VERBOSE'  ;;
     debug)        TYPE=DEBUG;   BUILD_DIR=$BUILD/debug ;;
     release)      TYPE=RELEASE; BUILD_DIR=$BUILD/release ;;
     clean)        CLEAN=1  ;;
     reset)        RESET=1 ;;
-    generate)     GENERATE=1 ;;
-    *)            if [ $value = $key ]; then
-                    CMAKE_BUILDTREE_VARIABLES="$CMAKE_BUILDTREE_VARIABLES -D$key=''"
+    gen|generate)     GENERATE=1 ;;
+    target)       CMAKE_BUILD_OPTIONS="$CMAKE_BUILD_OPTIONS --target $value";;
+    *)            if [ "$key" = "$value" ]; then
+                    CMAKE_BUILDTREE_VARIABLES="$CMAKE_BUILDTREE_VARIABLES $key=''"
                   else
-                    CMAKE_BUILDTREE_VARIABLES="$CMAKE_BUILDTREE_VARIABLES -D$key=$value"
+                    CMAKE_BUILDTREE_VARIABLES="$CMAKE_BUILDTREE_VARIABLES $key=$value"
                   fi ;;
   esac
 done
@@ -47,4 +51,4 @@ done
 # Clean
 [[ -n $CLEAN ]] && $CMAKE --build $BUILD_DIR --target clean
 # Build
-$CMAKE --build $BUILD_DIR $VERBOSE $JOBS
+$CMAKE --build $BUILD_DIR $VERBOSE $JOBS $CMAKE_BUILD_OPTIONS
