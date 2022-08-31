@@ -1,5 +1,12 @@
 #include <iostream>
 
+// namespace meta;
+
+namespace n {
+struct hello {};
+int world;
+}// namespace n
+
 using namespace std;
 
 template<typename T>
@@ -15,4 +22,7 @@ void print(T value, Args... args) {
 	print(args...);
 }
 
-int main() { print("abcde", 101, 101.4, true, 4, 91); }
+int main() {
+	print("HELLO", "WORLD");
+	print("HELLO", "WORLD");
+}
